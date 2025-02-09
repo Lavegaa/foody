@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// 유저 모델
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  profileImage  String?
+  lastLoginAt   DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  ingredients   UserIngredient[]
+  recipes       Recipe[]
+
+  @@map("users")
+}
+
+// 작성자 모델 추가
+model Author {
+  id          String    @id @default(cuid())
+  authorName  String    @db.VarChar(100)
+  authorUrl   String?   @db.VarChar(255)
+  recipes     Recipe[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("authors")
+}
+
+// 레시피 모델 수정
+model Recipe {
+  id          String    @id @default(cuid())
+  title       String    @db.VarChar(100)
+  thumbnail   String?   @db.VarChar(255)
+  link        String?   @db.VarChar(255)
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  author      Author    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  ingredients RecipeIngredient[]
+  steps       RecipeStep[]
+
+  @@map("recipes")
+}
+
+// 재료 모델
+model Ingredient {
+  id                Int                @id @default(autoincrement())
+  name              String             @unique @db.VarChar(100)
+  recipeIngredients RecipeIngredient[]
+  stepIngredients   StepIngredient[]
+  userIngredients   UserIngredient[]
+
+  @@map("ingredients")
+}
+
+// 레시피-재료 연결 모델
+model RecipeIngredient {
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId     String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId Int
+
+  @@id([recipeId, ingredientId])
+  @@map("recipe_ingredients")
+}
+
+// 레시피 단계 모델
+model RecipeStep {
+  id          Int              @id @default(autoincrement())
+  recipe      Recipe           @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId    String
+  stepNumber  Int
+  action      String          @db.Text
+  ingredients StepIngredient[]
+
+  @@map("recipe_steps")
+}
+
+// 단계별 사용 재료 모델
+model StepIngredient {
+  step         RecipeStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  stepId       Int
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId Int
+
+  @@id([stepId, ingredientId])
+  @@map("step_ingredients")
+}
+
+// 유저가 보유한 재료 모델
+model UserIngredient {
+  user         User       @relation(fields: [userId], references: [id])
+  userId       String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId Int
+  quantity     Float?
+  unit         String?    @db.VarChar(20)
+
+  @@id([userId, ingredientId])
+  @@map("user_ingredients")
+}
