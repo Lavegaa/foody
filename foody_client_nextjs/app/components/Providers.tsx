@@ -1,14 +1,26 @@
 'use client'
 
 import { SessionProvider } from "next-auth/react"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+
 export default function Providers({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return (
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000, // 1분
+        retry: 1,
+      },
+    },
+  })
+    return (
     <SessionProvider>
-      {children}
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
     </SessionProvider>
   )
 } 
