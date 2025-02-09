@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
@@ -24,12 +23,27 @@ model User {
   @@map("users")
 }
 
-// 레시피 모델
+// 작성자 모델 추가
+model Author {
+  id          String    @id @default(cuid())
+  authorName  String    @db.VarChar(100)
+  authorUrl   String?   @db.VarChar(255)
+  recipes     Recipe[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("authors")
+}
+
+// 레시피 모델 수정
 model Recipe {
   id          String    @id @default(cuid())
   title       String    @db.VarChar(100)
-  link        String?   @db.VarChar(255)  // YouTube 링크 필드 추가
-  author      User      @relation(fields: [authorId], references: [id])
+  thumbnail   String?   @db.VarChar(255)
+  link        String?   @db.VarChar(255)
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  author      Author    @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId    String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -52,7 +66,7 @@ model Ingredient {
 
 // 레시피-재료 연결 모델
 model RecipeIngredient {
-  recipe       Recipe     @relation(fields: [recipeId], references: [id])
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   recipeId     String
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
   ingredientId Int
@@ -64,8 +78,8 @@ model RecipeIngredient {
 // 레시피 단계 모델
 model RecipeStep {
   id          Int              @id @default(autoincrement())
-  recipe      Recipe           @relation(fields: [recipeId], references: [id])
-  recipeId    String          // Int에서 String으로 변경
+  recipe      Recipe           @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId    String
   stepNumber  Int
   action      String          @db.Text
   ingredients StepIngredient[]
@@ -75,7 +89,7 @@ model RecipeStep {
 
 // 단계별 사용 재료 모델
 model StepIngredient {
-  step         RecipeStep @relation(fields: [stepId], references: [id])
+  step         RecipeStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
   stepId       Int
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
   ingredientId Int
