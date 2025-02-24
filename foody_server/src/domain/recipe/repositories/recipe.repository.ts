@@ -10,6 +10,18 @@ export default class RecipeRepository {
     return await this.prisma.recipe.findMany();
   }
 
+  async getRecipesWithIngredients(): Promise<Recipe[]> {
+    return await this.prisma.recipe.findMany({
+      include: {
+        ingredients: {
+          include: {
+            ingredient: true,
+          },
+        },
+      },
+    });
+  }
+
   async getRecipeById(id: string): Promise<Recipe> {
     return await this.prisma.recipe.findUnique({
       where: { id },

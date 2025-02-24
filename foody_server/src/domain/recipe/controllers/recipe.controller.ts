@@ -9,6 +9,7 @@ import RecipeByIdUc from '../usecases/recipe-by-id.usecase';
 import UserIngredientListUc from '../usecases/user-ingredient-list.usecase';
 import CreateUserIngredientsUc from '../usecases/create-user-ingredients.usecase';
 import { UserIngredientDto } from '../dtos/ingredient.dto';
+import RecipeWithIngredientListUc from '../usecases/recipe-with-ingredient-list.usecase';
 
 @Controller('v1/recipes')
 @ApiTags('recipes')
@@ -17,12 +18,20 @@ export default class RecipeController {
     private readonly recipeListUc: RecipeListUc,
     private readonly recipeByIdUc: RecipeByIdUc,
     private readonly userIngredientListUc: UserIngredientListUc,
+    private readonly recipeWithIngredientListUc: RecipeWithIngredientListUc,
     private readonly createUserIngredientsUc: CreateUserIngredientsUc,
-  ) {}
+  ) { }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getRecipes(): Promise<Recipe[]> {
     return await this.recipeListUc.execute();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/recipes-with-ingredients')
+  async getRecipesWithIngredients(): Promise<Recipe[]> {
+    return await this.recipeWithIngredientListUc.execute();
   }
 
   @UseGuards(JwtAuthGuard)
@@ -47,3 +56,4 @@ export default class RecipeController {
     return new SimpleResponseDto();
   }
 }
+

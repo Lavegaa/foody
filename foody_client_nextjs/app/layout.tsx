@@ -1,37 +1,54 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import Providers from './components/Providers'
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import { headers } from 'next/headers';
 
+import './globals.css';
+import AuthProvider from './components/AuthProvider';
+import Providers from './components/Providers';
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
-
 export const metadata: Metadata = {
-  title: "Foody",
-  description: "Foody",
+  title: 'Foody',
+  description: 'Foody',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
+  let userData = null;
+  try {
+    const response = await fetch('http://localhost:4000/v1/auth/me', {
+      cache: 'no-store',
+      credentials: 'include',
+      headers: {
+        'Cookie': (await headers()).get('cookie') ?? '',
+      },
+    });
+
+    if (response.ok) {
+      userData = await response.json();
+    }
+  } catch (error) {
+    console.error('Failed to fetch user data:', error);
+  }
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-            <Providers>
-              {children}
-            </Providers>
+        <AuthProvider initialData={userData} />
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

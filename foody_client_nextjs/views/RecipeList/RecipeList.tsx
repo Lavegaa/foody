@@ -36,10 +36,22 @@ export default function RecipeList() {
           </div>
           
           <div className="p-4">
-            <h2 className="group-hover:text-blue-600 mb-2 font-medium text-lg line-clamp-2 transition-colors">
+            <h2 className="group-hover:text-blue-600 mb-2 font-medium text-gray-950 text-lg line-clamp-2 transition-colors">
               {recipe.title}
             </h2>
             
+            {/* 재료 태그 목록 */}
+            <div className="flex flex-wrap gap-1 mb-2">
+              {recipe.ingredients?.map((item) => (
+                <span
+                  key={item.ingredient.id}
+                  className="inline-flex items-center bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full font-medium text-gray-600 text-xs transition-colors"
+                >
+                  {item.ingredient.name}
+                </span>
+              ))}
+            </div>
+
             <div className="text-gray-500 text-sm">
               {dayjs(recipe.createdAt).format('YYYY.MM.DD')}
             </div>

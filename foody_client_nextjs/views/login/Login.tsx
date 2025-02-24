@@ -1,9 +1,11 @@
 'use client'
 
-import { useSession, signIn, signOut } from "next-auth/react"
+import { signIn, signOut, useSession } from "next-auth/react";
+import useLogin from "./useLogin";
 
 export default function Login() {
-  const { data: session } = useSession()
+  const { data: session } = useSession();
+  useLogin();
   
   if (session) {
     return (
@@ -15,11 +17,9 @@ export default function Login() {
   }
   
   return (
-    <>
-      <button onClick={() => signIn('google', { callbackUrl: '/' })}>
-        Google로 로그인
-      </button>
-    </>
+   <>
+    <button onClick={() => signIn('google')}>구글 로그인</button>
+   </>
   )
 }
 

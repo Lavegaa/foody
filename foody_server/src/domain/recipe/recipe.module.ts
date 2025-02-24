@@ -9,6 +9,7 @@ import { RecipeService } from './services/recipe.service';
 import CreateUserIngredientsUc from './usecases/create-user-ingredients.usecase';
 import UserIngredientListUc from './usecases/user-ingredient-list.usecase';
 import IngredientRepository from './repositories/ingredient.repository';
+import RecipeWithIngredientListUc from './usecases/recipe-with-ingredient-list.usecase';
 
 const providers = [
   // uc
@@ -16,6 +17,7 @@ const providers = [
   RecipeByIdUc,
   UserIngredientListUc,
   CreateUserIngredientsUc,
+  RecipeWithIngredientListUc,
   // repository
   RecipeRepository,
   IngredientRepository,

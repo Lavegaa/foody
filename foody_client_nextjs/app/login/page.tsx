@@ -1,5 +1,5 @@
-import Login from "@/views/login/Login";
+import Login from '@/views/Login/Login';
 
-export default function LoginPage() {
+export default async function LoginPage() {
   return <Login />;
 }
