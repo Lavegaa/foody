@@ -2,8 +2,9 @@
 
 import { useEffect } from 'react';
 
-import { useAuthStore } from '@/stores/useAuthStore';
 import { signOut } from 'next-auth/react';
+
+import { useAuthStore } from '@/stores/useAuthStore';
 export default function AuthProvider({ initialData }: { initialData: any }) {
   const setUser = useAuthStore((state) => state.setUser);
 

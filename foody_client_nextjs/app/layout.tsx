@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
 import { headers } from 'next/headers';
+import React from 'react';
 
+import { Geist, Geist_Mono } from 'next/font/google';
+
+import AuthProvider from '@/components/providers/AuthProvider';
+import Providers from '@/components/providers/Providers';
 import './globals.css';
-import AuthProvider from './components/AuthProvider';
-import Providers from './components/Providers';
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -20,18 +22,14 @@ export const metadata: Metadata = {
   description: 'Foody',
 };
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   let userData = null;
   try {
     const response = await fetch('http://localhost:4000/v1/auth/me', {
       cache: 'no-store',
       credentials: 'include',
       headers: {
-        'Cookie': (await headers()).get('cookie') ?? '',
+        Cookie: (await headers()).get('cookie') ?? '',
       },
     });
 
@@ -44,9 +42,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider initialData={userData} />
         <Providers>{children}</Providers>
       </body>

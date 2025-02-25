@@ -1,7 +1,9 @@
-import { useAuthStore } from '@/stores/useAuthStore';
-import { useSession, signOut } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { useEffect } from 'react';
+
+import { signOut, useSession } from 'next-auth/react';
+
+import { useAuthStore } from '@/stores/useAuthStore';
 
 export default function useLogin() {
   const { data: session, status } = useSession();
