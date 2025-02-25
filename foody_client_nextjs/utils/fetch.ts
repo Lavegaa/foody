@@ -20,7 +20,6 @@ export async function fetchApi<T>(endpoint: string, options: FetchOptions = {}):
     // 401 에러 처리 (토큰 만료)
     if (response.status === 401 && !skipAuth) {
       // 리프레시 토큰 요청
-      console.log('리프레시 토큰 요청');
       const refreshResponse = await fetch(`${API_URL}/v1/auth/refresh`, {
         method: 'POST',
         credentials: 'include', // 쿠키 포함
