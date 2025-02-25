@@ -5,7 +5,15 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SessionProvider } from 'next-auth/react';
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+import AuthProvider from './AuthProvider';
+
+export default function Providers({
+  children,
+  userData,
+}: {
+  children: React.ReactNode;
+  userData: any;
+}) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -16,6 +24,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   });
   return (
     <SessionProvider>
+      <AuthProvider initialData={userData} />
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </SessionProvider>
   );

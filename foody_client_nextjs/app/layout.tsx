@@ -43,8 +43,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AuthProvider initialData={userData} />
-        <Providers>{children}</Providers>
+        <Providers userData={userData}>{children}</Providers>
       </body>
     </html>
   );

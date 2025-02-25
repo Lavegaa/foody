@@ -2,14 +2,14 @@
 
 import { useEffect } from 'react';
 
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 
 import { useAuthStore } from '@/stores/useAuthStore';
 export default function AuthProvider({ initialData }: { initialData: any }) {
   const setUser = useAuthStore((state) => state.setUser);
-
+  const { data: session } = useSession();
   useEffect(() => {
-    if (!initialData) {
+    if (!initialData && session) {
       signOut();
       return;
     }
