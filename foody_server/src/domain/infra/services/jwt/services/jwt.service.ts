@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { TokenPayload } from 'google-auth-library';
 import * as jsonwebtoken from 'jsonwebtoken';
 import { IToken, Token } from '../models/jwt.interface';
+import { AUTH_CONSTANTS } from '../models/jwt.constants';
 
 @Injectable()
 export class JwtService implements Token {
@@ -12,9 +13,9 @@ export class JwtService implements Token {
 
   constructor(private configService: ConfigService) {
     this.secret = this.configService.get<string>('JWT_SECRET');
-    this.accessTokenExpiresIn = '1h';  // 액세스 토큰 만료 시간
-    this.refreshTokenExpiresIn = '14d'; // 리프레시 토큰 만료 시간
-    
+    this.accessTokenExpiresIn = AUTH_CONSTANTS.ACCESS_TOKEN.expiresIn; // 액세스 토큰 만료 시간
+    this.refreshTokenExpiresIn = AUTH_CONSTANTS.REFRESH_TOKEN.expiresIn; // 리프레시 토큰 만료 시간
+
     if (!this.secret) {
       throw new Error('JWT_SECRET이 설정되지 않았습니다.');
     }
@@ -25,20 +26,20 @@ export class JwtService implements Token {
       sub: payload.sub,
       email: payload.email,
       name: payload.name,
-      picture: payload.picture
+      picture: payload.picture,
     };
 
     const accessToken = jsonwebtoken.sign(tokenPayload, this.secret, {
-      expiresIn: this.accessTokenExpiresIn
+      expiresIn: this.accessTokenExpiresIn,
     });
 
     const refreshToken = jsonwebtoken.sign({ sub: payload.sub }, this.secret, {
-      expiresIn: this.refreshTokenExpiresIn
+      expiresIn: this.refreshTokenExpiresIn,
     });
 
     return {
       accessToken,
-      refreshToken
+      refreshToken,
     };
   }
 
@@ -48,7 +49,7 @@ export class JwtService implements Token {
 
   refreshAccessToken(sub: string): string {
     return jsonwebtoken.sign({ sub }, this.secret, {
-      expiresIn: this.accessTokenExpiresIn
+      expiresIn: this.accessTokenExpiresIn,
     });
   }
 }

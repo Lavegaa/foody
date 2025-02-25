@@ -3,12 +3,12 @@ import { PrismaModule } from '@infra/services/prisma/prisma.module';
 import { Module } from '@nestjs/common';
 import SignInUc from './usecases/signin.usecase';
 import { AuthService } from './services/auth.service';
+import { CookieService } from './services/cookie.service';
 import UserRepository from './repositories/user.repository';
 import GetUserInfoByGoogleCodeRepository from './repositories/google-oauth.repository';
 import AuthController from './controllers/auth.controller';
 import { ConfigModule } from '@nestjs/config';
 import RefreshTokenUc from './usecases/refresh-token.usecase';
-
 const providers = [
   // uc
   SignInUc,
@@ -18,6 +18,7 @@ const providers = [
   GetUserInfoByGoogleCodeRepository,
   // service
   AuthService,
+  CookieService,
 ];
 
 @Module({

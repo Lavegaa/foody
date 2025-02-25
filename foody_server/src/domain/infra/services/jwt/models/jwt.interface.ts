@@ -12,7 +12,6 @@ export interface IToken {
   refreshToken: string;
 }
 
-
 export interface Token {
   generate(payload: TokenPayload): IToken;
   verify(token: string): TokenPayload;

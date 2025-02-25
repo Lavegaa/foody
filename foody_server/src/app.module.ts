@@ -1,8 +1,8 @@
+import { JwtModule } from '@infra/services/jwt/jwt.module';
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
-import RecipeModule from './domain/recipe/recipe.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import AuthModule from './domain/auth/auth.module';
-import { JwtModule } from '@infra/services/jwt/jwt.module';
+import RecipeModule from './domain/recipe/recipe.module';
 
 @Module({
   imports: [RecipeModule, AuthModule, JwtModule],

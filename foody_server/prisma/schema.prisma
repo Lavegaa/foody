@@ -68,7 +68,7 @@ model Ingredient {
 model RecipeIngredient {
   recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   recipeId     String
-  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
   ingredientId Int
 
   @@id([recipeId, ingredientId])
@@ -91,7 +91,7 @@ model RecipeStep {
 model StepIngredient {
   step         RecipeStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
   stepId       Int
-  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
   ingredientId Int
 
   @@id([stepId, ingredientId])
@@ -102,7 +102,7 @@ model StepIngredient {
 model UserIngredient {
   user         User       @relation(fields: [userId], references: [id])
   userId       String
-  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
   ingredientId Int
   quantity     Float?
   unit         String?    @db.VarChar(20)

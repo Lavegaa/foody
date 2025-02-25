@@ -3,17 +3,15 @@ import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export default class GoogleOAuthRepository {
-  constructor() {}
+  constructor() { }
 
-  async getUserInfoByGoogleIdToken(idToken: string) {  
+  async getUserInfoByGoogleIdToken(idToken: string) {
     try {
-      const oAuth2Client = new OAuth2Client(
-        process.env.GOOGLE_CLIENT_ID
-      );
+      const oAuth2Client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
       const ticket = await oAuth2Client.verifyIdToken({
         idToken: idToken,
-        audience: process.env.GOOGLE_CLIENT_ID
+        audience: process.env.GOOGLE_CLIENT_ID,
       });
 
       if (!ticket) {
@@ -22,12 +20,11 @@ export default class GoogleOAuthRepository {
 
       const payload = ticket.getPayload();
       return payload;
-
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         throw error;
       }
-      throw new UnauthorizedException('구글 인증에 실패했습니다');
+      throw new Error('구글 인증에 실패했습니다');
     }
   }
 }
