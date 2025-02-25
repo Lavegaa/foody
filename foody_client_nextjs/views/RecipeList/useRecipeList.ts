@@ -1,7 +1,10 @@
-"use client";
+'use client';
 
-import useRecipesQuery, { RecipeWithIngredient } from "@/hooks/queries/useRecipesWithIngredientQuery";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
+
+import useRecipesQuery, {
+  RecipeWithIngredient,
+} from '@/hooks/queries/useRecipesWithIngredientQuery';
 
 export default function useRecipeList() {
   const [recipes, setRecipes] = useState<RecipeWithIngredient[]>([]);

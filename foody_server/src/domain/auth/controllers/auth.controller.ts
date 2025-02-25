@@ -1,10 +1,11 @@
-import { Controller, Post, Body, Res, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Res, Get, UseGuards, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import SignInUc from '../usecases/signin.usecase';
 import RefreshTokenUc from '../usecases/refresh-token.usecase';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { JwtAuthGuard } from '@infra/services/jwt/guards/jwt-auth.guard';
 import { CurrentUser } from '@infra/services/jwt/decorators/user.decorator';
+
 @Controller('v1/auth')
 @ApiTags('Auth')
 export default class AuthController {
@@ -28,9 +29,18 @@ export default class AuthController {
 
   @Post('refresh')
   async refresh(
-    @Body() body: { refreshToken: string },
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
   ): Promise<{ accessToken: string }> {
-    const newAccessToken = await this.refreshTokenUc.execute(body.refreshToken);
+    // 쿠키에서 리프레시 토큰 가져오기
+    const refreshToken = request.cookies['refresh_token'];
+    
+    if (!refreshToken) {
+      response.status(401).json({ message: 'Refresh token not found' });
+      return;
+    }
+    
+    const newAccessToken = await this.refreshTokenUc.execute(refreshToken, response);
     return { accessToken: newAccessToken };
   }
 

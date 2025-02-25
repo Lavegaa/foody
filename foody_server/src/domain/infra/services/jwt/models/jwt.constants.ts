@@ -37,8 +37,8 @@ class TokenExpiration {
 }
 
 export const AUTH_CONSTANTS = {
-  ACCESS_TOKEN: TokenExpiration.generate(1, 'hours'),
-  REFRESH_TOKEN: TokenExpiration.generate(14, 'days'),
+  ACCESS_TOKEN: TokenExpiration.generate(1, 'minutes'),
+  REFRESH_TOKEN: TokenExpiration.generate(2, 'minutes'),
   COOKIE_OPTIONS: {
     httpOnly: true,
     sameSite: 'lax' as const,

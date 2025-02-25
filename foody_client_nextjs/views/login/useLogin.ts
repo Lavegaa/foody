@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 
 import { signOut, useSession } from 'next-auth/react';
 
+import { AuthRepository } from '@/domain/repositories/AuthRepository';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 export default function useLogin() {
@@ -12,17 +13,11 @@ export default function useLogin() {
   const signinCallback = async () => {
     if (status === 'authenticated' && session.id_token && !user) {
       try {
-        const response = await fetch('http://localhost:4000/v1/auth/google/signin', {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ idToken: session.id_token }),
-        });
+        const authRepository = new AuthRepository();
+        const response = await authRepository.signIn(session.id_token);
 
-        if (!response.ok) {
-          console.error('Server auth failed');
+        if (!response) {
+          throw new Error('Server auth failed');
         }
       } catch (error) {
         console.error('Server auth error:', error);

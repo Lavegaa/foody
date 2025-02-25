@@ -1,4 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
+
+import { RecipeRepository } from '@/domain/repositories/RecipeRepository';
 
 export interface RecipeWithIngredient {
   id: string;
@@ -18,14 +20,9 @@ export interface RecipeWithIngredient {
 }
 
 export default function useRecipesQuery() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  const endpoint = `${apiUrl}/v1/recipes/recipes-with-ingredients`;
-
+  const recipeRepository = new RecipeRepository();
   return useQuery({
     queryKey: ['recipes-with-ingredients'],
-    queryFn: () =>
-      fetch(endpoint, {
-        credentials: 'include',
-      }).then(res => res.json()) as Promise<RecipeWithIngredient[]>,
+    queryFn: () => recipeRepository.getRecipes(),
   });
 }
