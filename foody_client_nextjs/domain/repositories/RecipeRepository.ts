@@ -1,4 +1,4 @@
-import { RecipeWithIngredient } from '@/hooks/queries/useRecipesWithIngredientQuery';
+import { RecipeWithIngredient } from '@/domain/models/recipeModel';
 import { get } from '@/utils/fetch';
 export class RecipeRepository {
   async getRecipes() {
