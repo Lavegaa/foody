@@ -23,7 +23,7 @@ export default function useLogin() {
         console.error('Server auth error:', error);
         signOut();
       }
-      redirect('/');
+      // redirect('/');
     }
   };
 

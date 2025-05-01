@@ -4,6 +4,7 @@ import React from 'react';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SessionProvider } from 'next-auth/react';
+import { OverlayProvider } from 'overlay-kit';
 
 import AuthProvider from './AuthProvider';
 
@@ -25,7 +26,9 @@ export default function Providers({
   return (
     <SessionProvider>
       <AuthProvider initialData={userData} />
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <OverlayProvider>{children}</OverlayProvider>
+      </QueryClientProvider>
     </SessionProvider>
   );
 }
