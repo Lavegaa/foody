@@ -23,18 +23,9 @@ module.exports = {
     'plugin:@next/next/recommended',
     'plugin:react/recommended',
     'plugin:react/jsx-runtime',
-    'prettier'
+    'prettier',
   ],
   rules: {
-    // Prettier 규칙을 ESLint 오류로 표시
-    'prettier/prettier': ['error', {
-      'singleQuote': true,
-      'semi': true,
-      'tabWidth': 2,
-      'trailingComma': 'es5',
-      'printWidth': 100
-    }],
-    
     // override configuration set by extending "eslint:recommended"
     'no-cond-assign': 'off',
     'no-control-regex': 'off',
@@ -61,7 +52,10 @@ module.exports = {
     'no-case-declarations': 'off',
     // custom setting
     'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': ['warn', { args: 'none', argsIgnorePattern: '_|req|res|next' }],
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      { args: 'none', argsIgnorePattern: '_|req|res|next' },
+    ],
     '@typescript-eslint/ban-ts-ignore': 'off',
     '@typescript-eslint/tsx-props-no-spreading': 'off',
     '@typescript-eslint/no-inferrable-types': 'off',
@@ -101,9 +95,9 @@ module.exports = {
     'import/named': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
     // 추가 포맷팅 규칙
-    'indent': ['error', 2],
-    'quotes': ['error', 'single', { 'avoidEscape': true, 'allowTemplateLiterals': true }],
-    'semi': ['error', 'always'],
+    indent: ['error', 2],
+    quotes: ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
+    semi: ['error', 'always'],
     'comma-dangle': ['error', 'always-multiline'],
     'eol-last': ['error', 'always'],
     // React 관련 규칙 강화
