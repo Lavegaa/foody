@@ -1,0 +1,15 @@
+langchain>=0.3.0
+langchain-openai>=0.2.0
+youtube-transcript-api>=0.6.2
+python-dotenv>=1.0.0
+pydantic>=2.7.4
+fastapi>=0.104.1
+uvicorn>=0.24.0
+pytest>=7.4.3
+pytest-asyncio>=0.21.1
+streamlit>=1.28.1
+requests>=2.31.0
+
+# 선택적 의존성 (IP 차단 해결용)
+# yt-dlp>=2023.7.6  # 대안 자막 추출 (선택사항)
+# requests[socks]>=2.31.0  # SOCKS 프록시 지원 (선택사항)

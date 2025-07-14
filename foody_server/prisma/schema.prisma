@@ -35,20 +35,34 @@ model Author {
   @@map("authors")
 }
 
+// 카테고리 모델 추가
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(50)
+  description String?   @db.Text
+  recipes     Recipe[]
+  createdAt   DateTime  @default(now())
+
+  @@map("categories")
+}
+
 // 레시피 모델 수정
 model Recipe {
-  id          String    @id @default(cuid())
-  title       String    @db.VarChar(100)
-  thumbnail   String?   @db.VarChar(255)
-  link        String?   @db.VarChar(255)
-  user        User      @relation(fields: [userId], references: [id])
-  userId      String
-  author      Author    @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId    String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  ingredients RecipeIngredient[]
-  steps       RecipeStep[]
+  id                   String    @id @default(cuid())
+  title                String    @db.VarChar(100)
+  thumbnail            String?   @db.VarChar(255)
+  link                 String?   @db.VarChar(255)
+  user                 User      @relation(fields: [userId], references: [id])
+  userId               String
+  author               Author    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId             String
+  category             Category? @relation(fields: [categoryId], references: [id])
+  categoryId           Int?
+  categoryConfidence   Float?    @db.DoublePrecision
+  categoryReasoning    String?   @db.Text
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  ingredients          RecipeIngredient[]
 
   @@map("recipes")
 }
@@ -58,7 +72,6 @@ model Ingredient {
   id                Int                @id @default(autoincrement())
   name              String             @unique @db.VarChar(100)
   recipeIngredients RecipeIngredient[]
-  stepIngredients   StepIngredient[]
   userIngredients   UserIngredient[]
 
   @@map("ingredients")
@@ -75,28 +88,6 @@ model RecipeIngredient {
   @@map("recipe_ingredients")
 }
 
-// 레시피 단계 모델
-model RecipeStep {
-  id          Int              @id @default(autoincrement())
-  recipe      Recipe           @relation(fields: [recipeId], references: [id], onDelete: Cascade)
-  recipeId    String
-  stepNumber  Int
-  action      String          @db.Text
-  ingredients StepIngredient[]
-
-  @@map("recipe_steps")
-}
-
-// 단계별 사용 재료 모델
-model StepIngredient {
-  step         RecipeStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
-  stepId       Int
-  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
-  ingredientId Int
-
-  @@id([stepId, ingredientId])
-  @@map("step_ingredients")
-}
 
 // 유저가 보유한 재료 모델
 model UserIngredient {
