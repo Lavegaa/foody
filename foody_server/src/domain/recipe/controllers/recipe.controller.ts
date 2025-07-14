@@ -61,11 +61,20 @@ export default class RecipeController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async createRecipeFromAgent(
+  async createRecipeFromUser(
     @Body() createRecipeDto: CreateRecipeDto,
     @CurrentUser() user,
   ): Promise<Recipe> {
     return await this.createRecipeFromAgentUc.execute(createRecipeDto, user.sub);
+  }
+
+  @Post('/from-agent')
+  async createRecipeFromAgent(
+    @Body() createRecipeDto: CreateRecipeDto,
+  ): Promise<Recipe> {
+    // Agent용 - 기본 admin 사용자 사용
+    const defaultUserId = "0"; // admin 사용자 ID
+    return await this.createRecipeFromAgentUc.execute(createRecipeDto, defaultUserId);
   }
 }
 
