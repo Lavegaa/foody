@@ -10,6 +10,8 @@ import UserIngredientListUc from '../usecases/user-ingredient-list.usecase';
 import CreateUserIngredientsUc from '../usecases/create-user-ingredients.usecase';
 import { UserIngredientDto } from '../dtos/ingredient.dto';
 import RecipeWithIngredientListUc from '../usecases/recipe-with-ingredient-list.usecase';
+import CreateRecipeFromAgentUc from '../usecases/create-recipe-from-youtube.usecase';
+import { CreateRecipeDto } from '../dtos/create-recipe.dto';
 
 @Controller('v1/recipes')
 @ApiTags('recipes')
@@ -20,6 +22,7 @@ export default class RecipeController {
     private readonly userIngredientListUc: UserIngredientListUc,
     private readonly recipeWithIngredientListUc: RecipeWithIngredientListUc,
     private readonly createUserIngredientsUc: CreateUserIngredientsUc,
+    private readonly createRecipeFromAgentUc: CreateRecipeFromAgentUc,
   ) { }
 
   @UseGuards(JwtAuthGuard)
@@ -54,6 +57,15 @@ export default class RecipeController {
   ): Promise<SimpleResponseDto> {
     await this.createUserIngredientsUc.execute(ingredients, user.sub);
     return new SimpleResponseDto();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  async createRecipeFromAgent(
+    @Body() createRecipeDto: CreateRecipeDto,
+    @CurrentUser() user,
+  ): Promise<Recipe> {
+    return await this.createRecipeFromAgentUc.execute(createRecipeDto, user.sub);
   }
 }
 
