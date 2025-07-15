@@ -88,6 +88,48 @@ def extract_ingredients(youtube_url: str) -> Dict[str, Any]:
     except Exception as e:
         return {"error": str(e)}
 
+def save_to_api_server(recipe: Dict[str, Any]) -> None:
+    """레시피를 API 서버에 저장"""
+    try:
+        # API 서버 URL 설정
+        api_server_url = "http://localhost:4000"
+        
+        # 레시피 데이터를 API 서버 형식으로 변환
+        recipe_data = {
+            "youtube_url": recipe.get("youtube_url", ""),
+            "title": recipe.get("title", ""),
+            "metadata": recipe.get("metadata", {}),
+            "ingredients": recipe.get("ingredients", []),
+            "cuisine_info": recipe.get("cuisine_info", {}),
+            "transcript": recipe.get("transcript", ""),
+            "processing_status": recipe.get("processing_status", "completed")
+        }
+        
+        with st.spinner("API 서버에 저장하는 중..."):
+            response = requests.post(
+                f"{api_server_url}/v1/recipes/from-agent",
+                json=recipe_data,
+                timeout=10
+            )
+            
+            if response.status_code in [200, 201]:
+                st.success("✅ 레시피가 성공적으로 저장되었습니다!")
+                
+                # 저장된 레시피 정보 표시
+                saved_recipe = response.json()
+                with st.expander("📋 저장된 레시피 정보", expanded=False):
+                    st.json(saved_recipe)
+                    
+            else:
+                st.error(f"❌ 저장 실패: HTTP {response.status_code}")
+                st.error(f"응답: {response.text}")
+                
+    except requests.exceptions.RequestException as e:
+        st.error(f"❌ 네트워크 오류: {str(e)}")
+        st.info("💡 API 서버가 실행 중인지 확인해주세요 (localhost:4000)")
+    except Exception as e:
+        st.error(f"❌ 예상치 못한 오류: {str(e)}")
+
 def main():
     # 헤더
     st.markdown('<h1 class="main-header">🍳 Foody Recipe Agent</h1>', unsafe_allow_html=True)
@@ -429,14 +471,14 @@ def main():
                         transcript = recipe['transcript']
                         st.text(transcript[:200] + "..." if len(transcript) > 200 else transcript)
                 
-                # 재료 목록 다운로드
-                st.subheader("📥 내보내기")
+                # 재료 목록 다운로드 및 저장
+                st.subheader("📥 내보내기 및 저장")
                 
                 # JSON 형태로 다운로드
                 ingredient_names = [ing.get('name', '') for ing in ingredients]
                 json_data = json.dumps(ingredient_names, ensure_ascii=False, indent=2)
                 
-                col_json, col_text = st.columns(2)
+                col_json, col_text, col_save = st.columns(3)
                 with col_json:
                     st.download_button(
                         label="JSON 다운로드",
@@ -453,6 +495,10 @@ def main():
                         file_name="ingredients.txt",
                         mime="text/plain"
                     )
+                
+                with col_save:
+                    if st.button("💾 API 서버에 저장", type="primary", use_container_width=True):
+                        save_to_api_server(recipe)
             else:
                 st.warning("추출된 재료가 없습니다.")
         else:

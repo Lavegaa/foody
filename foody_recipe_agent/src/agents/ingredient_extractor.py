@@ -359,16 +359,6 @@ class IngredientExtractorAgent:
                 processing_status="completed"
             )
             
-            # 10. API 서버로 레시피 전송 (옵션)
-            if os.getenv("AUTO_SEND_TO_API", "false").lower() == "true":
-                print("📤 API 서버로 레시피 전송 중...")
-                api_result = self.api_client.send_recipe_to_api(recipe)
-                
-                if api_result["success"]:
-                    print("✅ API 서버 전송 성공")
-                else:
-                    print(f"❌ API 서버 전송 실패: {api_result.get('error', 'Unknown error')}")
-            
             return recipe
             
         except Exception as e:
