@@ -10,6 +10,8 @@ import UserIngredientListUc from '../usecases/user-ingredient-list.usecase';
 import CreateUserIngredientsUc from '../usecases/create-user-ingredients.usecase';
 import { UserIngredientDto } from '../dtos/ingredient.dto';
 import RecipeWithIngredientListUc from '../usecases/recipe-with-ingredient-list.usecase';
+import CreateRecipeFromAgentUc from '../usecases/create-recipe-from-youtube.usecase';
+import { CreateRecipeDto } from '../dtos/create-recipe.dto';
 
 @Controller('v1/recipes')
 @ApiTags('recipes')
@@ -20,6 +22,7 @@ export default class RecipeController {
     private readonly userIngredientListUc: UserIngredientListUc,
     private readonly recipeWithIngredientListUc: RecipeWithIngredientListUc,
     private readonly createUserIngredientsUc: CreateUserIngredientsUc,
+    private readonly createRecipeFromAgentUc: CreateRecipeFromAgentUc,
   ) { }
 
   @UseGuards(JwtAuthGuard)
@@ -54,6 +57,24 @@ export default class RecipeController {
   ): Promise<SimpleResponseDto> {
     await this.createUserIngredientsUc.execute(ingredients, user.sub);
     return new SimpleResponseDto();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  async createRecipeFromUser(
+    @Body() createRecipeDto: CreateRecipeDto,
+    @CurrentUser() user,
+  ): Promise<Recipe> {
+    return await this.createRecipeFromAgentUc.execute(createRecipeDto, user.sub);
+  }
+
+  @Post('/from-agent')
+  async createRecipeFromAgent(
+    @Body() createRecipeDto: CreateRecipeDto,
+  ): Promise<Recipe> {
+    // Agent용 - 기본 admin 사용자 사용
+    const defaultUserId = "0"; // admin 사용자 ID
+    return await this.createRecipeFromAgentUc.execute(createRecipeDto, defaultUserId);
   }
 }
 

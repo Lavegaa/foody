@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from models.recipe import Ingredient, Recipe, VideoMetadata, CuisineInfo, CuisineType
 from utils.youtube_transcript import YouTubeTranscriptExtractor
 from utils.youtube_metadata import YouTubeMetadataExtractor
+from clients.api_client import ApiClient
 
 load_dotenv()
 
@@ -35,6 +36,9 @@ class IngredientExtractorAgent:
             temperature=0.1,
             openai_api_key=os.getenv("OPENAI_API_KEY")
         )
+        
+        # API 클라이언트 초기화
+        self.api_client = ApiClient()
         
         # 재료 추출 프롬프트
         self.extraction_prompt = PromptTemplate.from_template(
@@ -365,6 +369,19 @@ class IngredientExtractorAgent:
                 transcript=transcript if 'transcript' in locals() else None
             )
             raise Exception(f"YouTube 영상 처리 중 오류 발생: {str(e)}")
+    
+    def send_recipe_to_api(self, recipe: Recipe, user_id: str = None) -> dict:
+        """
+        분석 완료된 레시피를 API 서버로 전송합니다.
+        
+        Args:
+            recipe: 분석 완료된 Recipe 객체
+            user_id: 사용자 ID (옵션)
+            
+        Returns:
+            전송 결과
+        """
+        return self.api_client.send_recipe_to_api(recipe, user_id)
     
     def _create_demo_recipe(self, youtube_url: str) -> Recipe:
         """
