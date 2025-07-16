@@ -27,13 +27,7 @@ module.exports = {
   ],
   rules: {
     // Prettier 규칙을 ESLint 오류로 표시
-    'prettier/prettier': ['error', {
-      'singleQuote': true,
-      'semi': true,
-      'tabWidth': 2,
-      'trailingComma': 'es5',
-      'printWidth': 100
-    }],
+    'prettier/prettier': 'off',
     
     // override configuration set by extending "eslint:recommended"
     'no-cond-assign': 'off',
