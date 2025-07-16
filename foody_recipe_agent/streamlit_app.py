@@ -88,15 +88,45 @@ def extract_ingredients(youtube_url: str) -> Dict[str, Any]:
     except Exception as e:
         return {"error": str(e)}
 
+def check_recipe_exists(youtube_url: str) -> Dict[str, Any]:
+    """레시피가 이미 존재하는지 확인"""
+    try:
+        api_server_url = "http://localhost:4000"
+        response = requests.post(
+            f"{api_server_url}/v1/recipes/check-exists",
+            json={"youtubeUrl": youtube_url},
+            timeout=5
+        )
+        
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return {"exists": False, "error": f"HTTP {response.status_code}"}
+            
+    except Exception as e:
+        return {"exists": False, "error": str(e)}
+
 def save_to_api_server(recipe: Dict[str, Any]) -> None:
     """레시피를 API 서버에 저장"""
     try:
         # API 서버 URL 설정
         api_server_url = "http://localhost:4000"
+        youtube_url = recipe.get("youtube_url", "")
         
-        # 레시피 데이터를 API 서버 형식으로 변환
+        # 1. 먼저 중복 체크
+        with st.spinner("중복 레시피 확인 중..."):
+            check_result = check_recipe_exists(youtube_url)
+            
+        if check_result.get("exists", False):
+            video_id = check_result.get("videoId", "Unknown")
+            st.warning(f"⚠️ 이미 존재하는 레시피입니다!")
+            st.info(f"🎥 Video ID: {video_id}")
+            st.info("💡 같은 YouTube 영상으로 만든 레시피가 이미 데이터베이스에 저장되어 있습니다.")
+            return
+        
+        # 2. 중복이 아니면 저장 진행
         recipe_data = {
-            "youtube_url": recipe.get("youtube_url", ""),
+            "youtube_url": youtube_url,
             "title": recipe.get("title", ""),
             "metadata": recipe.get("metadata", {}),
             "ingredients": recipe.get("ingredients", []),
@@ -120,6 +150,9 @@ def save_to_api_server(recipe: Dict[str, Any]) -> None:
                 with st.expander("📋 저장된 레시피 정보", expanded=False):
                     st.json(saved_recipe)
                     
+            elif response.status_code == 400 and "이미 존재하는" in response.text:
+                st.warning("⚠️ 이미 존재하는 레시피입니다!")
+                st.info("💡 같은 YouTube 영상으로 만든 레시피가 이미 저장되어 있습니다.")
             else:
                 st.error(f"❌ 저장 실패: HTTP {response.status_code}")
                 st.error(f"응답: {response.text}")

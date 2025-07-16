@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@infra/services/prisma/prisma.service';
 import { Recipe } from '@prisma/client';
 import { CreateRecipeDto } from '../dtos/create-recipe.dto';
+import { extractYouTubeVideoId } from '../utils/youtube-utils';
 @Injectable()
 export default class RecipeRepository {
   private readonly logger = new Logger(RecipeRepository.name);
@@ -37,8 +38,40 @@ export default class RecipeRepository {
     });
   }
 
+  async checkRecipeExists(youtubeUrl: string): Promise<boolean> {
+    const videoId = extractYouTubeVideoId(youtubeUrl);
+    if (!videoId) return false;
+
+    const existingRecipe = await this.prisma.recipe.findFirst({
+      where: {
+        link: {
+          contains: videoId
+        }
+      }
+    });
+
+    return existingRecipe !== null;
+  }
+
   async createRecipeFromAgent(agentRecipe: CreateRecipeDto, userId: string): Promise<Recipe> {
     this.logger.log(`Creating recipe from agent data for user: ${userId}`);
+
+    // 1. 중복 체크
+    const videoId = extractYouTubeVideoId(agentRecipe.youtube_url);
+    if (videoId) {
+      const existingRecipe = await this.prisma.recipe.findFirst({
+        where: {
+          link: {
+            contains: videoId
+          }
+        }
+      });
+
+      if (existingRecipe) {
+        this.logger.warn(`Recipe already exists for video ID: ${videoId}`);
+        throw new Error(`이미 존재하는 YouTube 영상입니다. (Video ID: ${videoId})`);
+      }
+    }
 
     return await this.prisma.$transaction(async (tx) => {
       // 1. Author 생성 또는 조회

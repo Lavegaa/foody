@@ -12,6 +12,7 @@ import { UserIngredientDto } from '../dtos/ingredient.dto';
 import RecipeWithIngredientListUc from '../usecases/recipe-with-ingredient-list.usecase';
 import CreateRecipeFromAgentUc from '../usecases/create-recipe-from-youtube.usecase';
 import { CreateRecipeDto } from '../dtos/create-recipe.dto';
+import RecipeRepository from '../repositories/recipe.repository';
 
 @Controller('v1/recipes')
 @ApiTags('recipes')
@@ -23,6 +24,7 @@ export default class RecipeController {
     private readonly recipeWithIngredientListUc: RecipeWithIngredientListUc,
     private readonly createUserIngredientsUc: CreateUserIngredientsUc,
     private readonly createRecipeFromAgentUc: CreateRecipeFromAgentUc,
+    private readonly recipeRepository: RecipeRepository,
   ) { }
 
   @UseGuards(JwtAuthGuard)
@@ -75,6 +77,19 @@ export default class RecipeController {
     // Agent용 - 기본 admin 사용자 사용
     const defaultUserId = "0"; // admin 사용자 ID
     return await this.createRecipeFromAgentUc.execute(createRecipeDto, defaultUserId);
+  }
+
+  @Post('/check-exists')
+  async checkRecipeExists(
+    @Body() body: { youtubeUrl: string },
+  ): Promise<{ exists: boolean; videoId?: string }> {
+    const exists = await this.recipeRepository.checkRecipeExists(body.youtubeUrl);
+    const videoId = body.youtubeUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([^&\n?#]+)/)?.[1];
+    
+    return {
+      exists,
+      videoId: videoId || undefined
+    };
   }
 }
 
