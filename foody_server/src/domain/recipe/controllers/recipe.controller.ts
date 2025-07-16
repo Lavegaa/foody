@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@infra/services/jwt/guards/jwt-auth.guard';
 import { CurrentUser } from '@infra/services/jwt/decorators/user.decorator';
@@ -28,27 +28,27 @@ export default class RecipeController {
   ) { }
 
   @UseGuards(JwtAuthGuard)
-  @Get()
-  async getRecipes(): Promise<Recipe[]> {
-    return await this.recipeListUc.execute();
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Get('/recipes-with-ingredients')
   async getRecipesWithIngredients(): Promise<Recipe[]> {
     return await this.recipeWithIngredientListUc.execute();
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':id')
-  async getRecipeById(@Param('id') id: string): Promise<Recipe> {
-    return await this.recipeByIdUc.execute(id);
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Get('/ingredients')
   async getUserIngredients(@CurrentUser() user): Promise<UserIngredient[]> {
     return await this.userIngredientListUc.execute(user.sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getRecipes(): Promise<Recipe[]> {
+    return await this.recipeListUc.execute();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async getRecipeById(@Param('id') id: string): Promise<Recipe> {
+    return await this.recipeByIdUc.execute(id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -62,12 +62,13 @@ export default class RecipeController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post()
-  async createRecipeFromUser(
-    @Body() createRecipeDto: CreateRecipeDto,
+  @Delete('/ingredients/:id')
+  async deleteUserIngredient(
+    @Param('id') id: string,
     @CurrentUser() user,
-  ): Promise<Recipe> {
-    return await this.createRecipeFromAgentUc.execute(createRecipeDto, user.sub);
+  ): Promise<SimpleResponseDto> {
+    // TODO: 재료 삭제 usecase 구현 필요
+    return new SimpleResponseDto();
   }
 
   @Post('/from-agent')
@@ -90,6 +91,15 @@ export default class RecipeController {
       exists,
       videoId: videoId || undefined
     };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  async createRecipeFromUser(
+    @Body() createRecipeDto: CreateRecipeDto,
+    @CurrentUser() user,
+  ): Promise<Recipe> {
+    return await this.createRecipeFromAgentUc.execute(createRecipeDto, user.sub);
   }
 }
 

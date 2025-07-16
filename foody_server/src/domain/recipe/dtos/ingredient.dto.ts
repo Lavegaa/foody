@@ -8,7 +8,7 @@ export class IngredientResponseDto {
 }
 
 export class UserIngredientDto {
-  ingredientId: number;
+  name: string;
   quantity?: number;
   unit?: string;
 }
