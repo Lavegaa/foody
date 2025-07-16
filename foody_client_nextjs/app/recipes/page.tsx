@@ -178,9 +178,9 @@ export default function RecipesPage() {
                 className="bg-white rounded-xl shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
                 onClick={() => openYouTubeVideo(recipe.link)}
               >
-                <div className="flex">
+                <div>
                   {/* 썸네일 */}
-                  <div className="w-24 h-24 bg-gray-200 flex-shrink-0">
+                  <div className="w-full h-40 bg-gray-200 rounded-t-xl overflow-hidden">
                     {recipe.thumbnail ? (
                       <img
                         src={recipe.thumbnail}
@@ -188,14 +188,14 @@ export default function RecipesPage() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-2xl">
+                      <div className="w-full h-full flex items-center justify-center text-4xl">
                         🍳
                       </div>
                     )}
                   </div>
 
                   {/* 레시피 정보 */}
-                  <div className="flex-1 p-4">
+                  <div className="p-4">
                     <div className="flex items-start justify-between mb-2">
                       <h3 className="font-medium text-gray-800 text-sm line-clamp-2">
                         {recipe.title}
