@@ -41,7 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <html lang="en">
+    <html lang='en'>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers userData={userData}>{children}</Providers>
       </body>

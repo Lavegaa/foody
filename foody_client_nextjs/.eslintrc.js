@@ -97,6 +97,7 @@ module.exports = {
     // 추가 포맷팅 규칙
     'indent': ['error', 2],
     'quotes': ['error', 'single', { 'avoidEscape': true, 'allowTemplateLiterals': true }],
+    'jsx-quotes': ['error', 'prefer-single'],
     'semi': ['error', 'always'],
     'comma-dangle': ['error', 'always-multiline'],
     'eol-last': ['error', 'always'],
