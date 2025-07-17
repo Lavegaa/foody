@@ -54,10 +54,13 @@ export default function FridgePage() {
 
   const removeIngredient = async (ingredientId: string) => {
     try {
+      console.log('Deleting ingredient with ID:', ingredientId);
       await userIngredientsRepo.removeUserIngredient(ingredientId);
+      console.log('Ingredient deleted successfully');
       await fetchUserIngredients();
     } catch (error) {
       console.error('재료 삭제 실패:', error);
+      // TODO: Add user-visible error feedback
     }
   };
 

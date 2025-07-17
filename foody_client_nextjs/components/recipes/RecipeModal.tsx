@@ -170,7 +170,7 @@ export default function RecipeModal({
               type='date'
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent'
+              className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900'
             />
           </div>
 
@@ -190,7 +190,7 @@ export default function RecipeModal({
               className={`w-full font-medium py-3 px-6 rounded-lg transition-colors ${
                 selectedMealTime
                   ? 'bg-orange-500 hover:bg-orange-600 text-white'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-gray-400 text-gray-200 cursor-not-allowed'
               }`}
             >
               요리 기록 저장하기

@@ -25,6 +25,7 @@ export class UserIngredientsRepository {
   }
 
   async removeUserIngredient(id: string): Promise<void> {
+    console.log('Making DELETE request to:', `/v1/recipes/ingredients/${id}`);
     await del<void>(`/v1/recipes/ingredients/${id}`);
   }
 }

@@ -19,7 +19,7 @@ export default function EmptyState({
     <div className='bg-white rounded-xl shadow-sm p-8 text-center'>
       <div className='text-4xl mb-4'>{emoji}</div>
       <p className='text-gray-600 mb-2'>{title}</p>
-      <p className='text-sm text-gray-400 mb-4'>{description}</p>
+      <p className='text-sm text-gray-600 mb-4'>{description}</p>
       {actionText && onAction && (
         <button
           onClick={onAction}

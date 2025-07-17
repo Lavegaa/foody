@@ -13,6 +13,7 @@ import RecipeWithIngredientListUc from '../usecases/recipe-with-ingredient-list.
 import CreateRecipeFromAgentUc from '../usecases/create-recipe-from-youtube.usecase';
 import { CreateRecipeDto } from '../dtos/create-recipe.dto';
 import RecipeRepository from '../repositories/recipe.repository';
+import IngredientRepository from '../repositories/ingredient.repository';
 
 @Controller('v1/recipes')
 @ApiTags('recipes')
@@ -25,6 +26,7 @@ export default class RecipeController {
     private readonly createUserIngredientsUc: CreateUserIngredientsUc,
     private readonly createRecipeFromAgentUc: CreateRecipeFromAgentUc,
     private readonly recipeRepository: RecipeRepository,
+    private readonly ingredientRepository: IngredientRepository,
   ) { }
 
   @UseGuards(JwtAuthGuard)
@@ -37,6 +39,12 @@ export default class RecipeController {
   @Get('/ingredients')
   async getUserIngredients(@CurrentUser() user): Promise<UserIngredient[]> {
     return await this.userIngredientListUc.execute(user.sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/all-ingredients')
+  async getAllIngredients() {
+    return await this.recipeRepository.getAllIngredients();
   }
 
   @UseGuards(JwtAuthGuard)
@@ -67,8 +75,11 @@ export default class RecipeController {
     @Param('id') id: string,
     @CurrentUser() user,
   ): Promise<SimpleResponseDto> {
-    // TODO: 재료 삭제 usecase 구현 필요
-    return new SimpleResponseDto();
+    const ingredientId = parseInt(id);
+    if (isNaN(ingredientId)) {
+      throw new Error('Invalid ingredient ID');
+    }
+    return await this.ingredientRepository.deleteUserIngredient(ingredientId, user.sub);
   }
 
   @Post('/from-agent')

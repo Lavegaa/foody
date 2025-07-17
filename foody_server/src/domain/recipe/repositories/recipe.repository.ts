@@ -53,6 +53,14 @@ export default class RecipeRepository {
     return existingRecipe !== null;
   }
 
+  async getAllIngredients() {
+    return await this.prisma.ingredient.findMany({
+      orderBy: {
+        name: 'asc'
+      }
+    });
+  }
+
   async createRecipeFromAgent(agentRecipe: CreateRecipeDto, userId: string): Promise<Recipe> {
     this.logger.log(`Creating recipe from agent data for user: ${userId}`);
 

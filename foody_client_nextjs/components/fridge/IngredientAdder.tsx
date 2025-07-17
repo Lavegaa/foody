@@ -29,14 +29,14 @@ export default function IngredientAdder({ onAddIngredient }: IngredientAdderProp
           value={newIngredient}
           onChange={(e) => setNewIngredient(e.target.value)}
           placeholder='재료명을 입력하세요 (예: 양파, 당근)'
-          className='flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent'
+          className='flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900'
           onKeyPress={(e) => e.key === 'Enter' && handleAdd()}
           disabled={isAdding}
         />
         <button
           onClick={handleAdd}
           disabled={isAdding || !newIngredient.trim()}
-          className='px-6 py-3 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white font-medium rounded-lg transition-colors'
+          className='px-6 py-3 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 disabled:text-gray-200 text-white font-medium rounded-lg transition-colors'
         >
           {isAdding ? '...' : '추가'}
         </button>

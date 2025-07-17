@@ -14,7 +14,7 @@ export default function FridgeHeader() {
           </div>
           <button
             onClick={() => router.push('/login')}
-            className='text-sm text-gray-500 hover:text-gray-700'
+            className='text-sm text-gray-600 hover:text-gray-800'
           >
             설정
           </button>

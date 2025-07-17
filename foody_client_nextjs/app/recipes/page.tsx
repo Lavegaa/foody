@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 
 import EmptyState from '@/components/common/EmptyState';
+import FridgeModal from '@/components/common/FridgeModal';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import RecipeCard from '@/components/recipes/RecipeCard';
 import RecipeFilter from '@/components/recipes/RecipeFilter';
@@ -29,6 +30,7 @@ export default function RecipesPage() {
   const [sortBy, setSortBy] = useState<'match' | 'title'>('match');
   const [expandedRecipes, setExpandedRecipes] = useState<Set<string>>(new Set());
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeWithMatch | null>(null);
+  const [isFridgeModalOpen, setIsFridgeModalOpen] = useState(false);
   
   const userIngredientsRepo = new UserIngredientsRepository();
   const recipesRepo = new RecipesRepository();
@@ -114,6 +116,18 @@ export default function RecipesPage() {
     setSelectedRecipe(null);
   };
 
+  const openFridgeModal = () => {
+    setIsFridgeModalOpen(true);
+  };
+
+  const closeFridgeModal = () => {
+    setIsFridgeModalOpen(false);
+  };
+
+  const handleIngredientUpdate = () => {
+    fetchData(); // 재료 업데이트 시 레시피 목록 새로고침
+  };
+
   const toggleRecipeExpansion = (recipeId: string, e: React.MouseEvent) => {
     e.stopPropagation(); // 카드 클릭 이벤트와 충돌 방지
     setExpandedRecipes(prev => {
@@ -133,7 +147,10 @@ export default function RecipesPage() {
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      <RecipeHeader userIngredientsCount={userIngredients.length} />
+      <RecipeHeader 
+        userIngredientsCount={userIngredients.length} 
+        onFridgeClick={openFridgeModal}
+      />
 
       <div className='max-w-md mx-auto px-4 py-6'>
         <RecipeFilter sortBy={sortBy} onSortChange={setSortBy} />
@@ -171,6 +188,13 @@ export default function RecipesPage() {
           missingIngredients={selectedRecipe.missingIngredients}
         />
       )}
+
+      {/* 냉장고 모달 */}
+      <FridgeModal
+        isOpen={isFridgeModalOpen}
+        onClose={closeFridgeModal}
+        onIngredientUpdate={handleIngredientUpdate}
+      />
     </div>
   );
 }
