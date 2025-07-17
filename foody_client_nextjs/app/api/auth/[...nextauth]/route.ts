@@ -10,6 +10,9 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     async jwt({ token, account }) {
+      if (account?.access_token) {
+        token.accessToken = account.access_token;
+      }
       if (account?.id_token) {
         token.id_token = account.id_token;
       }
@@ -18,6 +21,7 @@ export const authOptions: AuthOptions = {
     async session({ session, token }) {
       return {
         ...session,
+        accessToken: token.accessToken,
         id_token: token.id_token,
       };
     },

@@ -22,14 +22,35 @@ export default class IngredientRepository {
     ingredients: UserIngredientDto[],
     userId: string,
   ): Promise<SimpleResponseDto> {
-    await this.prisma.userIngredient.createMany({
-      data: ingredients.map((ingredient) => ({
-        userId,
-        ingredientId: ingredient.ingredientId,
-        quantity: ingredient.quantity,
-        unit: ingredient.unit,
-      })),
-    });
+    for (const ingredientDto of ingredients) {
+      // 1. 재료 찾거나 생성
+      const ingredient = await this.prisma.ingredient.upsert({
+        where: { name: ingredientDto.name },
+        update: {},
+        create: { name: ingredientDto.name },
+      });
+
+      // 2. 사용자 재료 생성 (중복 방지)
+      await this.prisma.userIngredient.upsert({
+        where: {
+          userId_ingredientId: {
+            userId,
+            ingredientId: ingredient.id,
+          },
+        },
+        update: {
+          quantity: ingredientDto.quantity,
+          unit: ingredientDto.unit,
+        },
+        create: {
+          userId,
+          ingredientId: ingredient.id,
+          quantity: ingredientDto.quantity,
+          unit: ingredientDto.unit,
+        },
+      });
+    }
+    
     return new SimpleResponseDto();
   }
 

@@ -27,13 +27,7 @@ module.exports = {
   ],
   rules: {
     // Prettier 규칙을 ESLint 오류로 표시
-    'prettier/prettier': ['error', {
-      'singleQuote': true,
-      'semi': true,
-      'tabWidth': 2,
-      'trailingComma': 'es5',
-      'printWidth': 100
-    }],
+    'prettier/prettier': 'off',
     
     // override configuration set by extending "eslint:recommended"
     'no-cond-assign': 'off',
@@ -103,6 +97,7 @@ module.exports = {
     // 추가 포맷팅 규칙
     'indent': ['error', 2],
     'quotes': ['error', 'single', { 'avoidEscape': true, 'allowTemplateLiterals': true }],
+    'jsx-quotes': ['error', 'prefer-single'],
     'semi': ['error', 'always'],
     'comma-dangle': ['error', 'always-multiline'],
     'eol-last': ['error', 'always'],
